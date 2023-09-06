@@ -2,11 +2,15 @@
 
 import React from "react";
 import { Link } from "react-router-dom";
+import useMovieStore from "../store/movieStore";
 
-const MovieList = (props) => {
+const MovieList = () => {
+  // Extracting movies from useMovieStore
+  const movies = useMovieStore((state) => state.movies);
+
   return (
     <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-5 gap-6">
-      {props.movies.map((movie, index) => (
+      {movies.map((movie, index) => (
         <div
           key={index}
           className="bg-white p-4 rounded-lg shadow-md hover:shadow-lg transition">

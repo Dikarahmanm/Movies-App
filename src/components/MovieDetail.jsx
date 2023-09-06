@@ -4,6 +4,7 @@
 import { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { generatePrice, formatRupiah } from "../scripts/helpers";
+import useMovieStore from "../store/movieStore";
 
 const MovieDetail = ({
   searchValue,
@@ -11,10 +12,12 @@ const MovieDetail = ({
   isTyping,
   setIsTyping,
 }) => {
-  const [moviePrice, setMoviePrice] = useState(null);
   const { id } = useParams();
-  const [movieDetail, setMovieDetail] = useState({});
-  const navigate = useNavigate(); // for navigation
+  const navigate = useNavigate();
+  const movieDetail = useMovieStore((state) => state.movieDetail);
+  const setMovieDetail = useMovieStore((state) => state.setMovieDetail);
+  const moviePrice = useMovieStore((state) => state.moviePrice);
+  const setMoviePrice = useMovieStore((state) => state.setMoviePrice);
 
   useEffect(() => {
     const fetchDetail = async () => {
@@ -50,6 +53,10 @@ const MovieDetail = ({
       fetchSearch();
     }
   }, [searchValue, isTyping, navigate]);
+
+  const addToCart = () => {
+    alert("Berhasil ditambahkan ke keranjang!");
+  };
 
   return (
     <div className="p-4">
@@ -106,7 +113,9 @@ const MovieDetail = ({
         <strong>Box Office:</strong> {movieDetail.BoxOffice}
       </p>
       {moviePrice && (
-        <button className="mt-4 bg-blue-500 text-white px-4 py-2 rounded">
+        <button
+          onClick={() => addToCart(movieDetail)}
+          className="mt-4 bg-blue-500 text-white px-4 py-2 rounded">
           Buy for {formatRupiah(moviePrice)}
         </button>
       )}

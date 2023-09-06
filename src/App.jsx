@@ -14,12 +14,19 @@ import {
   useNavigate,
 } from "react-router-dom"; // <-- Tambahkan useNavigate
 import MovieDetail from "./components/MovieDetail";
+import useMovieStore from "./store/movieStore";
 
 function App() {
-  const [movies, setMovies] = useState([]);
-  const [searchValue, setSearchValue] = useState("");
-  const [currentPage, setCurrentPage] = useState(1);
-  const [isTyping, setIsTyping] = useState(false);
+  const {
+    movies,
+    searchValue,
+    currentPage,
+    isTyping,
+    setMovies,
+    setSearchValue,
+    setCurrentPage,
+    setIsTyping,
+  } = useMovieStore();
 
   const fetchMovies = async (searchValue, page = 1) => {
     const url = `https://www.omdbapi.com/?s=${searchValue}&page=${page}&apikey=74832bf4`;
@@ -32,18 +39,18 @@ function App() {
         ...movie,
         price: generatePrice(movie.imdbID), // Menambahkan harga ke setiap film
       }));
-      setMovies(moviesWithPrice);
+      setMovies(moviesWithPrice); // Change this line
     } else {
-      setMovies([]);
+      setMovies([]); // And this line
     }
   };
 
   const handleSearch = (value) => {
-    setIsTyping(true);
-    setSearchValue(value);
-    setCurrentPage(1); // reset currentPage
+    setIsTyping(true); // Change this line
+    setSearchValue(value); // Change this line
+    setCurrentPage(1); // Change this line
     setTimeout(() => {
-      setIsTyping(false);
+      setIsTyping(false); // Change this line
     }, 500);
   };
 

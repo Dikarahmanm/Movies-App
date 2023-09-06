@@ -1,20 +1,34 @@
 /** @format */
 
 import React from "react";
-import { useNavigate } from "react-router-dom"; // <-- Import useNavigate
+import { useNavigate } from "react-router-dom";
+import useMovieStore from "../store/movieStore"; // <-- Import useNavigate
 
 const SearchBox = (props) => {
-  const navigate = useNavigate(); // <-- useNavigate hook
+  const navigate = useNavigate();
+  // <-- useNavigate hook
+  const searchValue = useMovieStore((state) => state.searchValue);
+  const typingTimer = useMovieStore((state) => state.typingTimer);
+  const setSearchValue = useMovieStore((state) => state.setSearchValue);
+  const setIsTyping = useMovieStore((state) => state.setIsTyping);
+  const clearTypingTimer = useMovieStore((state) => state.clearTypingTimer);
 
   const handleInputChange = (event) => {
-    props.setSearchValue(event.target.value);
+    setSearchValue(event.target.value);
+    setIsTyping(true);
 
     // Clear any existing timers
-    clearTimeout(typingTimer);
-    typingTimer = setTimeout(() => {
+    clearTypingTimer();
+
+    // Set a new timer
+    const timer = setTimeout(() => {
+      setIsTyping(false);
       // Navigate to the search results page after the user stops typing
       navigate(`/search/${event.target.value}`);
     }, 1000);
+
+    // Update typingTimer in the store
+    useMovieStore.setState({ typingTimer: timer });
   };
 
   return (

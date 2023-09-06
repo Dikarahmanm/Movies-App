@@ -1,8 +1,13 @@
 /** @format */
-
 import React from "react";
+import useMovieStore from "../store/movieStore"; // Import the store
 
-const Pagination = ({ currentPage, setCurrentPage, movies }) => {
+const Pagination = () => {
+  // Extracting state and actions from useMovieStore
+  const currentPage = useMovieStore((state) => state.currentPage);
+  const movies = useMovieStore((state) => state.movies);
+  const setCurrentPage = useMovieStore((state) => state.setCurrentPage);
+
   const showPrev = currentPage > 1;
   const showNext = movies.length === 10; // if there are 10 movies, it's likely there's a next page
 
