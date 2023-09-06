@@ -7,6 +7,13 @@ import Header from "./components/Header";
 import SearchBox from "./components/SearchBox";
 import Pagination from "./components/Pagination";
 import { generatePrice } from "./scripts/helpers";
+import {
+  BrowserRouter as Router,
+  Route,
+  Routes,
+  useNavigate,
+} from "react-router-dom"; // <-- Tambahkan useNavigate
+import MovieDetail from "./components/MovieDetail";
 
 function App() {
   const [movies, setMovies] = useState([]);
@@ -37,7 +44,7 @@ function App() {
     setCurrentPage(1); // reset currentPage
     setTimeout(() => {
       setIsTyping(false);
-    }, 500); // Assuming user stops typing after 500ms. Adjust as needed.
+    }, 500);
   };
 
   useEffect(() => {
@@ -47,22 +54,44 @@ function App() {
   }, [searchValue, currentPage]);
 
   return (
-    <div className="container mx-auto px-4 py-8">
-      <div className="flex justify-between items-center mb-6">
-        <Header heading="Movies" />
-        <SearchBox searchValue={searchValue} setSearchValue={handleSearch} />
-      </div>
-      <div className="grid">
-        <MovieList movies={movies} />
-        {!isTyping && movies.length > 0 && (
-          <Pagination
-            currentPage={currentPage}
-            setCurrentPage={setCurrentPage}
-            movies={movies}
+    <Router>
+      <div className="container mx-auto px-4 py-8">
+        <div className="flex justify-between items-center mb-6">
+          <Header heading="Movies" />
+          <SearchBox searchValue={searchValue} setSearchValue={handleSearch} />
+        </div>
+        <Routes>
+          <Route
+            path="/"
+            element={
+              <div className="grid">
+                <MovieList movies={movies} />
+                {!isTyping && movies.length > 0 && (
+                  <Pagination
+                    currentPage={currentPage}
+                    setCurrentPage={setCurrentPage}
+                    movies={movies}
+                  />
+                )}
+              </div>
+            }
           />
-        )}
+          <Route
+            path="/movie/:id"
+            element={
+              <div className="grid">
+                <MovieDetail
+                  searchValue={searchValue}
+                  setSearchValue={setSearchValue}
+                  isTyping={isTyping}
+                  setIsTyping={setIsTyping}
+                />
+              </div>
+            }
+          />
+        </Routes>
       </div>
-    </div>
+    </Router>
   );
 }
 

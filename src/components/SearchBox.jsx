@@ -1,19 +1,19 @@
 /** @format */
 
 import React from "react";
-import { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom"; // <-- Import useNavigate
 
 const SearchBox = (props) => {
-  const [isTyping, setIsTyping] = useState(false);
+  const navigate = useNavigate(); // <-- useNavigate hook
 
   const handleInputChange = (event) => {
-    setIsTyping(true);
     props.setSearchValue(event.target.value);
 
     // Clear any existing timers
     clearTimeout(typingTimer);
     typingTimer = setTimeout(() => {
-      setIsTyping(false);
+      // Navigate to the search results page after the user stops typing
+      navigate(`/search/${event.target.value}`);
     }, 1000);
   };
 
@@ -35,7 +35,7 @@ const SearchBox = (props) => {
       </span>
       <input
         value={props.value}
-        onChange={handleInputChange}
+        onChange={handleInputChange} // <-- Use the updated handler
         type="text"
         placeholder="Search for a movie..."
         className="p-2 pl-10 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-300 flex-grow w-64"

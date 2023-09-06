@@ -2,11 +2,19 @@
 
 // components/MovieDetail.jsx
 import { useEffect, useState } from "react";
-import { useParams } from "react-router-dom";
+import { useParams, useNavigate } from "react-router-dom";
+import { generatePrice, formatRupiah } from "../scripts/helpers";
 
-const MovieDetail = () => {
+const MovieDetail = ({
+  searchValue,
+  setSearchValue,
+  isTyping,
+  setIsTyping,
+}) => {
+  const [moviePrice, setMoviePrice] = useState(null);
   const { id } = useParams();
   const [movieDetail, setMovieDetail] = useState({});
+  const navigate = useNavigate(); // for navigation
 
   useEffect(() => {
     const fetchDetail = async () => {
@@ -15,10 +23,33 @@ const MovieDetail = () => {
       );
       const data = await response.json();
       setMovieDetail(data);
+      setMovieDetail(data);
+      setMoviePrice(generatePrice(id));
     };
 
     fetchDetail();
   }, [id]);
+
+  useEffect(() => {
+    if (searchValue && !isTyping) {
+      const fetchSearch = async () => {
+        const response = await fetch(
+          `https://www.omdbapi.com/?s=${searchValue}&apikey=74832bf4`
+        );
+        const data = await response.json();
+        if (data.Search && data.Search.length > 0) {
+          navigate(`/movie/${data.Search[0].imdbID}`);
+        } else {
+          // Jika kita berada di halaman detail saat pencarian, navigasi kembali ke halaman utama.
+          if (window.location.pathname.includes("/movie/")) {
+            navigate("/");
+          }
+        }
+      };
+
+      fetchSearch();
+    }
+  }, [searchValue, isTyping, navigate]);
 
   return (
     <div className="p-4">
@@ -74,6 +105,11 @@ const MovieDetail = () => {
       <p className="my-2">
         <strong>Box Office:</strong> {movieDetail.BoxOffice}
       </p>
+      {moviePrice && (
+        <button className="mt-4 bg-blue-500 text-white px-4 py-2 rounded">
+          Buy for {formatRupiah(moviePrice)}
+        </button>
+      )}
       {/* Anda bisa menambahkan informasi lainnya sesuai kebutuhan */}
     </div>
   );
