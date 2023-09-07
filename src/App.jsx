@@ -7,12 +7,13 @@ import Header from "./components/Header";
 import SearchBox from "./components/SearchBox";
 import Pagination from "./components/Pagination";
 import { generatePrice } from "./scripts/helpers";
+import SearchResults from "./components/SearchResults";
 import {
   BrowserRouter as Router,
   Route,
   Routes,
-  useNavigate,
-} from "react-router-dom"; // <-- Tambahkan useNavigate
+  useParams,
+} from "react-router-dom";
 import MovieDetail from "./components/MovieDetail";
 import useMovieStore from "./store/movieStore";
 
@@ -20,13 +21,15 @@ function App() {
   const {
     movies,
     searchValue,
-    currentPage,
     isTyping,
     setMovies,
     setSearchValue,
-    setCurrentPage,
+    totalPages,
+    setTotalPages,
     setIsTyping,
   } = useMovieStore();
+  const [currentPage, setCurrentPage] = useState(1);
+  const { query } = useParams();
 
   const fetchMovies = async (searchValue, page = 1) => {
     const url = `https://www.omdbapi.com/?s=${searchValue}&page=${page}&apikey=74832bf4`;
@@ -37,28 +40,40 @@ function App() {
     if (responseJson.Search) {
       const moviesWithPrice = responseJson.Search.map((movie) => ({
         ...movie,
-        price: generatePrice(movie.imdbID), // Menambahkan harga ke setiap film
+        price: generatePrice(movie.imdbID),
       }));
-      setMovies(moviesWithPrice); // Change this line
+      setMovies(moviesWithPrice);
     } else {
-      setMovies([]); // And this line
+      setMovies([]);
+    }
+
+    if (responseJson.totalResults) {
+      const totalResults = parseInt(responseJson.totalResults, 10);
+      const pages = Math.ceil(totalResults / 10);
+      setTotalPages(pages);
     }
   };
 
   const handleSearch = (value) => {
-    setIsTyping(true); // Change this line
-    setSearchValue(value); // Change this line
-    setCurrentPage(1); // Change this line
+    setIsTyping(true);
+    setSearchValue(value);
+    setCurrentPage(1);
     setTimeout(() => {
-      setIsTyping(false); // Change this line
+      setIsTyping(false);
     }, 500);
   };
 
   useEffect(() => {
-    if (searchValue) {
-      fetchMovies(searchValue, currentPage);
+    // Fetch data when the component initially mounts
+    fetchMovies("Avengers"); // Replace with your default query
+  }, []); // Empty dependency array means this effect runs once on mount
+
+  useEffect(() => {
+    if (searchValue || query) {
+      const currentPageToUse = query ? 1 : currentPage;
+      fetchMovies(query || searchValue, currentPageToUse);
     }
-  }, [searchValue, currentPage]);
+  }, [searchValue, currentPage, query]);
 
   return (
     <Router>
@@ -77,7 +92,7 @@ function App() {
                   <Pagination
                     currentPage={currentPage}
                     setCurrentPage={setCurrentPage}
-                    movies={movies}
+                    totalPages={totalPages}
                   />
                 )}
               </div>
@@ -86,16 +101,14 @@ function App() {
           <Route
             path="/movie/:id"
             element={
-              <div className="grid">
-                <MovieDetail
-                  searchValue={searchValue}
-                  setSearchValue={setSearchValue}
-                  isTyping={isTyping}
-                  setIsTyping={setIsTyping}
-                />
-              </div>
+              <MovieDetail
+                searchValue={searchValue}
+                setSearchValue={setSearchValue}
+                setIsTyping={setIsTyping}
+              />
             }
           />
+          <Route path="/search/*" element={<SearchResults />} />
         </Routes>
       </div>
     </Router>

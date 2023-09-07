@@ -1,22 +1,25 @@
 /** @format */
+
 import React from "react";
-import useMovieStore from "../store/movieStore"; // Import the store
 
-const Pagination = () => {
-  // Extracting state and actions from useMovieStore
-  const currentPage = useMovieStore((state) => state.currentPage);
-  const movies = useMovieStore((state) => state.movies);
-  const setCurrentPage = useMovieStore((state) => state.setCurrentPage);
-
+const Pagination = ({ currentPage, totalPages, setCurrentPage }) => {
   const showPrev = currentPage > 1;
-  const showNext = movies.length === 10; // if there are 10 movies, it's likely there's a next page
+  const showNext = currentPage < totalPages;
+
+  const handlePrevClick = () => {
+    setCurrentPage((prev) => Math.max(prev - 1, 1));
+  };
+
+  const handleNextClick = () => {
+    setCurrentPage((prev) => prev + 1);
+  };
 
   return (
     <div className="mt-6 flex justify-center">
       {showPrev && (
         <button
           className="bg-blue-500 text-white px-4 py-2 rounded-l"
-          onClick={() => setCurrentPage((prev) => Math.max(prev - 1, 1))}>
+          onClick={handlePrevClick}>
           Prev
         </button>
       )}
@@ -24,7 +27,7 @@ const Pagination = () => {
       {showNext && (
         <button
           className="bg-blue-500 text-white px-4 py-2 rounded-r"
-          onClick={() => setCurrentPage((prev) => prev + 1)}>
+          onClick={handleNextClick}>
           Next
         </button>
       )}
