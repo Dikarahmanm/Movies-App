@@ -12,6 +12,7 @@ const useMovieStore = create((set) => ({
   isTyping: false,
   movieDetail: {},
   moviePrice: null,
+  API_KEY: "74832bf4",
   setMovieDetail: (detail) => set({ movieDetail: detail }),
   setMoviePrice: (price) => set({ moviePrice: price }),
 

@@ -15,7 +15,7 @@ const Pagination = ({ currentPage, totalPages, setCurrentPage }) => {
   };
 
   return (
-    <div className="mt-6 flex justify-center">
+    <div className="flex items-center justify-between border-t border-gray-200 bg-white my-4 px-4 py-3 sm:px-6">
       {showPrev && (
         <button
           className="bg-blue-500 text-white px-4 py-2 rounded-l"
@@ -23,7 +23,7 @@ const Pagination = ({ currentPage, totalPages, setCurrentPage }) => {
           Prev
         </button>
       )}
-      <span className="mx-2 py-2 px-4 bg-gray-200">{currentPage}</span>
+      <span className="mx-2 py-2 px-4 bg-gray-400">{currentPage}</span>
       {showNext && (
         <button
           className="bg-blue-500 text-white px-4 py-2 rounded-r"

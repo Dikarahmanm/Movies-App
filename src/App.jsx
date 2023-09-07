@@ -27,12 +27,13 @@ function App() {
     totalPages,
     setTotalPages,
     setIsTyping,
+    API_KEY,
   } = useMovieStore();
   const [currentPage, setCurrentPage] = useState(1);
   const { query } = useParams();
 
   const fetchMovies = async (searchValue, page = 1) => {
-    const url = `https://www.omdbapi.com/?s=${searchValue}&page=${page}&apikey=74832bf4`;
+    const url = `https://www.omdbapi.com/?s=${searchValue}&page=${page}&apikey=${API_KEY}`;
 
     const response = await fetch(url);
     const responseJson = await response.json();
@@ -78,9 +79,14 @@ function App() {
   return (
     <Router>
       <div className="container mx-auto px-4 py-8">
-        <div className="flex justify-between items-center mb-6">
+        <div className="flex justify-between items-center mb-6 my-4">
           <Header heading="Movies" />
-          <SearchBox searchValue={searchValue} setSearchValue={handleSearch} />
+          <div className="ml-4">
+            <SearchBox
+              searchValue={searchValue}
+              setSearchValue={handleSearch}
+            />
+          </div>
         </div>
         <Routes>
           <Route
